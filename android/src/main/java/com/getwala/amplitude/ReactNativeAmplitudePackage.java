@@ -17,22 +17,16 @@ import com.getwala.amplitude.ReactNativeAmplitudeModule;
 
 public class ReactNativeAmplitudePackage implements ReactPackage {
 
+  private String apiKey;
 
-  private Application mApplication = null;
-
-
-  
-  public ReactNativeAmplitudePackage(Application application, String apiKey) {
-
-    mApplication = application;
-
+  public ReactNativeAmplitudePackage(String apiKey) {
+    this.apiKey = apiKey;
   }
-
 
 
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-      return Arrays.<NativeModule>asList(new ReactNativeAmplitudeModule(reactContext, this.mApplication));
+      return Arrays.<NativeModule>asList(new ReactNativeAmplitudeModule(reactContext));
     }
 
     public List<Class<? extends JavaScriptModule>> createJSModules() {
