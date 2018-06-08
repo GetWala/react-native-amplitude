@@ -27,7 +27,7 @@ public class ReactNativeAmplitudeModule extends ReactContextBaseJavaModule imple
     {
         super(reactContext);
         this.apiKey=apiKey;
-        initialize();
+
     }
 
     @Override
