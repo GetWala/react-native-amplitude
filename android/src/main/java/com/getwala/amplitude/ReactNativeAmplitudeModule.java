@@ -20,10 +20,14 @@ import org.json.JSONObject;
 public class ReactNativeAmplitudeModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
     private static String TAG = "ReactNativeAmplitude";
+    private String apiKey = null;
 
-    public ReactNativeAmplitudeModule(ReactApplicationContext reactContext)
+
+    public ReactNativeAmplitudeModule(ReactApplicationContext reactContext, String apiKey)
     {
         super(reactContext);
+        this.apiKey=apiKey;
+        initialize();
     }
 
     @Override
@@ -32,11 +36,11 @@ public class ReactNativeAmplitudeModule extends ReactContextBaseJavaModule imple
     }
 
     @ReactMethod
-    public void initialize(String apiKey) {
+    public void initialize() {
         Activity activity = getCurrentActivity();
 
         if (activity != null) {
-            Amplitude.getInstance().initialize(activity, apiKey).enableForegroundTracking(activity.getApplication());
+            Amplitude.getInstance().initialize(activity, this.apiKey).enableForegroundTracking(activity.getApplication());
         }
     }
 
