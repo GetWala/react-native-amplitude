@@ -62,6 +62,30 @@ public class ReactNativeAmplitudeModule extends ReactContextBaseJavaModule imple
         Amplitude.getInstance().setUserId(id);
     }
 
+    @ReactMethod
+    public void setUserProperties(ReadableMap properties) {
+        try {
+            JSONObject jProperties = convertReadableToJsonObject(properties);
+            Amplitude.getInstance().setUserProperties(jProperties);
+        } catch (JSONException e) {
+            return;
+        }
+    }
+
+    @ReactMethod
+    public void setOptOut(Boolean optOut) {
+        Amplitude.getInstance().setOptOut(optOut);
+    }
+
+    @ReactMethod
+    public void clearUserProperties() {
+        Amplitude.getInstance().clearUserProperties();
+    }
+
+    @ReactMethod
+    public void regenerateDeviceId() {
+        Amplitude.getInstance().regenerateDeviceId();
+
     public static JSONObject convertReadableToJsonObject(ReadableMap map) throws JSONException {
         JSONObject jsonObj = new JSONObject();
         ReadableMapKeySetIterator it = map.keySetIterator();
