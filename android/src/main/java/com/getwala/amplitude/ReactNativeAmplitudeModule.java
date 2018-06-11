@@ -20,13 +20,11 @@ import org.json.JSONObject;
 public class ReactNativeAmplitudeModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
     private static String TAG = "ReactNativeAmplitude";
-    private String apiKey = null;
+    private String apiKey;
 
-
-    public ReactNativeAmplitudeModule(ReactApplicationContext reactContext, String apiKey)
-    {
+    public ReactNativeAmplitudeModule(ReactApplicationContext reactContext, String apiKey) {
         super(reactContext);
-        this.apiKey=apiKey;
+        this.apiKey = apiKey;
 
         Activity activity = getCurrentActivity();
 
@@ -91,8 +89,9 @@ public class ReactNativeAmplitudeModule extends ReactContextBaseJavaModule imple
     @ReactMethod
     public void regenerateDeviceId() {
         Amplitude.getInstance().regenerateDeviceId();
+    }
 
-    public static JSONObject convertReadableToJsonObject(ReadableMap map) throws JSONException {
+    private static JSONObject convertReadableToJsonObject(ReadableMap map) throws JSONException {
         JSONObject jsonObj = new JSONObject();
         ReadableMapKeySetIterator it = map.keySetIterator();
         while (it.hasNextKey()) {
