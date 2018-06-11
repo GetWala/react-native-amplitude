@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.amplitude.api.Amplitude;
-import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -16,22 +15,18 @@ import com.facebook.react.bridge.ReadableType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-public class ReactNativeAmplitudeModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
+public class ReactNativeAmplitudeModule extends ReactContextBaseJavaModule {
 
     private static String TAG = "ReactNativeAmplitude";
-    private String apiKey;
 
-    public ReactNativeAmplitudeModule(ReactApplicationContext reactContext, String apiKey) {
+    private String apiKey;
+    private Boolean initialised = false;
+
+    ReactNativeAmplitudeModule(ReactApplicationContext reactContext, String apiKey) {
         super(reactContext);
         this.apiKey = apiKey;
 
-        Activity activity = getCurrentActivity();
-
-        if (activity != null) {
-            Amplitude.getInstance().initialize(activity, this.apiKey).enableForegroundTracking(activity.getApplication());
-        }
-
+        this.initialize();
     }
 
     @Override
@@ -41,13 +36,21 @@ public class ReactNativeAmplitudeModule extends ReactContextBaseJavaModule imple
 
     @ReactMethod
     public void initialize() {
-        Activity activity = getCurrentActivity();
+        if (!this.initialised) {
+            try {
+                Activity activity = getCurrentActivity();
 
-        if (activity != null) {
-            Amplitude.getInstance().initialize(activity, this.apiKey).enableForegroundTracking(activity.getApplication());
+                if (activity != null) {
+                    Amplitude.getInstance().initialize(activity, this.apiKey).enableForegroundTracking(activity.getApplication());
+                    this.initialised = true;
+                } else {
+                    throw new ActivityNullException("Activity is null");
+                }
+            } catch (ActivityNullException e) {
+                Log.e(TAG, "Activity null: " + e.getLocalizedMessage(), e);
+            }
         }
     }
-
 
     @ReactMethod
     public void logEvent(String identifier, ReadableMap properties) {
@@ -56,10 +59,8 @@ public class ReactNativeAmplitudeModule extends ReactContextBaseJavaModule imple
             Amplitude.getInstance().logEvent(identifier, jProperties);
         } catch (JSONException e) {
             Log.e(TAG, "logEvent: " + e.getLocalizedMessage(), e);
-            return;
         }
     }
-
 
     @ReactMethod
     public void setUserId(String id) {
@@ -72,7 +73,7 @@ public class ReactNativeAmplitudeModule extends ReactContextBaseJavaModule imple
             JSONObject jProperties = convertReadableToJsonObject(properties);
             Amplitude.getInstance().setUserProperties(jProperties);
         } catch (JSONException e) {
-            return;
+            Log.e(TAG, "setUserProperties: " + e.getLocalizedMessage(), e);
         }
     }
 
@@ -119,45 +120,13 @@ public class ReactNativeAmplitudeModule extends ReactContextBaseJavaModule imple
         return jsonObj;
     }
 
+    private class ActivityNullException extends Exception {
 
-//    private void startSession()
-//    {
-//        if (mPinpointManager == null) {
-//            if (initializing) return;
-//            this.initializeWithSettings(new PinpointCallback<PinpointManager>() {
-//                @Override
-//                public void onComplete(PinpointManager manager) {
-//                    manager.getSessionClient().startSession();
-//                    sessionIsStarted = true;
-//                }
-//            });
-//        } else {
-//            if (sessionIsStarted) return;
-//            mPinpointManager.getSessionClient().startSession();
-//            sessionIsStarted = true;
-//        }
-//    }
-
-    @Override
-    public void onHostResume() {
-        //startSession();
-    }
-
-    @Override
-    public void onHostPause() {
-//        if (mPinpointManager != null && sessionIsStarted) {
-//            mPinpointManager.getSessionClient().stopSession();
-//            mPinpointManager.getAnalyticsClient().submitEvents();
-//            sessionIsStarted = false;
-//        }
-    }
-
-    @Override
-    public void onHostDestroy() {
-//        if (mPinpointManager != null && sessionIsStarted) {
-//            mPinpointManager.getSessionClient().stopSession();
-//            mPinpointManager.getAnalyticsClient().submitEvents();
-//            sessionIsStarted = false;
-//        }
+        private ActivityNullException(String message) {
+            super(message);
+        }
     }
 }
+
+
+
