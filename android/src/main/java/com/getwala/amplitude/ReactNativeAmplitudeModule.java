@@ -28,6 +28,12 @@ public class ReactNativeAmplitudeModule extends ReactContextBaseJavaModule imple
         super(reactContext);
         this.apiKey=apiKey;
 
+        Activity activity = getCurrentActivity();
+
+        if (activity != null) {
+            Amplitude.getInstance().initialize(activity, this.apiKey).enableForegroundTracking(activity.getApplication());
+        }
+
     }
 
     @Override
