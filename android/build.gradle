@@ -41,6 +41,6 @@ repositories {
 
 dependencies {
     compile 'com.facebook.react:react-native:+'
-    compile 'com.amplitude:android-sdk:2.13.0'
+    compile 'com.amplitude:android-sdk:2.18.1'
 }
   
