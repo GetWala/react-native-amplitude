@@ -25,8 +25,6 @@ public class ReactNativeAmplitudeModule extends ReactContextBaseJavaModule {
     ReactNativeAmplitudeModule(ReactApplicationContext reactContext, String apiKey) {
         super(reactContext);
         this.apiKey = apiKey;
-
-        this.initialize();
     }
 
     @Override
